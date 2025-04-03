@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chá de Casa Nova</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        ul { list-style-type: none; padding: 0; }
+        li { padding: 10px; border: 1px solid #ddd; margin: 5px; cursor: pointer; }
+        .selecionado { background-color: #d3ffd3; pointer-events: none; }
+    </style>
+</head>
+<body>
+    <h1>Lista de Presentes - Chá de Casa Nova</h1>
+    <ul id="lista-presentes"></ul>
+    
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyC4oygU8lZ2rZN6xW4vHkk7pKlYw1znoO4",
+            authDomain: "cha-de-casa-nova-6b961.firebaseapp.com",
+            databaseURL: "https://cha-de-casa-nova-6b961-default-rtdb.firebaseio.com/",
+            projectId: "cha-de-casa-nova-6b961",
+            storageBucket: "cha-de-casa-nova-6b961.firebasestorage.app",
+            messagingSenderId: "870502065760",
+            appId: "1:870502065760:web:499e46a011a4b87383c505"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const listaRef = db.ref("presentes");
+
+        const itens = [
+            "Conjunto de pratos",
+            "Jogo de talheres",
+            "Toalha de mesa",
+            "Liquidificador",
+            "Ferro de passar",
+            "Jogo de copos"
+        ];
+
+        function renderizarLista(snapshot) {
+            const lista = document.getElementById("lista-presentes");
+            lista.innerHTML = "";
+            itens.forEach(item => {
+                const li = document.createElement("li");
+                li.textContent = item;
+                li.onclick = () => selecionarItem(item);
+                if (snapshot.hasChild(item)) {
+                    li.classList.add("selecionado");
+                    li.textContent += " (Já escolhido)";
+                }
+                lista.appendChild(li);
+            });
+        }
+
+        function selecionarItem(item) {
+            listaRef.child(item).set(true);
+        }
+
+        listaRef.on("value", renderizarLista);
+    </script>
+</body>
+</html>
